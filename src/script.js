@@ -15,6 +15,7 @@ function main() {
 var aC = {
 title: "HnS Framework",
 logged: false,
+user: {},
 timestamp: Date.now || function(){
 	return +new Date;
 },
@@ -66,14 +67,39 @@ getHash: function(){
 	return decodeURIComponent(window.location.hash.substring(1));
 },
 init: function(){
-
+	$.get('ajax.php', {p:"logged"}, function(response) {
+		if (aC.stringToBoolean(response)) aC.logged = true;
+		if (!aC.logged) { /* Handle Login Form */ }
+		else aC.loggedIn();
+	});
+},
+loggedIn: function(){
+	if (aC.logged) {
+		$.getJSON('ajax.php', {p:"userdata"}, function(response) {
+			aC.user = response;
+			/* Manipulate User Data */
+		});
+		if (aC.empty(aC.getHash())) {
+			/* Handle Default Action */
+		} else {
+			/* Handle Hash Actions */
+		}
+	}
+},
+login: function(){
+	/* Handle Login */
+},
+logout: function(){
+	$.post('ajax.php', {logout:true}, function() {
+		/* Handle Logout */
+	});
 },
 onKeyDown: function(e){
 	var keyCode = e.keyCode || e.which;
 	if (aC.logged) {
-
+		/* Handle LoggedIn Keys */
 	} else {
-
+		/* Handle LoggedOut Keys */
 	}
 },
 handleError: function(error){
@@ -83,7 +109,7 @@ handleError: function(error){
 
 $(document.documentElement).keydown(aC.onKeyDown);
 $(document).ready(function(){ aC.init();
-
+/* Handle DOM Actions */
 });
 
 return true;
